@@ -76,8 +76,8 @@ class savingsAccount extends Bank implements Accounts{
         }
     }
     public void deposit(double amount){
-        if(amount > 100000000){
-            System.out.println("Amount is too large");
+        if(!checkIf()){
+            System.out.println("Account not available in the database, please add an account");
             return;
         }
         this.savings += amount;
@@ -89,8 +89,61 @@ class savingsAccount extends Bank implements Accounts{
         System.out.println("Your Balance is: "+this.savings);
     }
 }
+class currentAccount extends Bank implements Accounts{
+    double usageAmount;
+    int creditScore;
+    int purchaseCount;
+    /*
+     * current account treated as an entity that cannot support large transactions, and tracks purchase logs
+     */
+    public void deposit(double amount){
+        if(amount >= 10000){
+            System.out.println("Account cannot support large transactions");
+            return;
+        }
+        this.creditScore++;
+        this.usageAmount += amount;
+    }
+    public void withdraw(double amount){
+        if (amount >= 10000){
+            System.out.println("Account cannot support large transactions");
+            return;
+        }
+        this.usageAmount -= amount;
+        this.purchaseCount++;
+    }
+    public void calculateInterest(){
+        System.out.println("Cannot calculate interest for current account");
+    }
+     public boolean checkIf(){
+        Scanner sc = new Scanner(System.in)
+;       System.out.println("Enter your account number: ");
+        int acctno = sc.nextInt();
+        sc.nextLine();
+        for(int x : Bank.accountList){
+            if(x == acctno)
+                return true;
+        }
+        sc.close();
+        return false;
+    }
+    public void viewBalance(){
+        if(!checkIf()){
+            System.out.println("Please create an account");
+            return;
+        }
+        System.out.println("Account balance is: "+this.usageAmount);
+        
+    }
+}
 class Main{
     public static void main(String[] args){
-        
+        Bank icici = new Bank(123456);
+        icici.display();
+        icici.addAccount();
+        icici.display();
+        savingsAccount sa = new savingsAccount(12000.0, 0.0);
+        sa.deposit(450.0);
+        sa.viewBalance();
     }
 }
